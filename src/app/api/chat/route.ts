@@ -1,5 +1,7 @@
 import { type NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { google } from "@ai-sdk/google";
+import { generateText } from "ai";
 
 import { db } from "~/server/db";
 import { useAuthStore } from "~/lib/store";

@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import { useAuthStore } from "~/lib/store";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useChat } from "ai/react";
 type Message = {
   sender: "user" | "model";
   content: string;
