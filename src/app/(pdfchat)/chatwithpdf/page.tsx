@@ -10,8 +10,9 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 //@ts-ignore
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-//@ts-ignore
+// @ts-ignore
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -47,16 +48,13 @@ const PdfChat = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    //@ts-ignore
-    if (!input.trim() ?? isLoading) return;
+    if (!input.trim() || isLoading) return;
 
     setIsLoading(true);
     const userMessage = { role: "user" as const, content: input };
 
-    // Add user message once
     setMessages((prev) => [...prev, userMessage]);
 
-    // Create initial assistant message
     const assistantMessage = { role: "assistant" as const, content: "" };
     setMessages((prev) => [...prev, assistantMessage]);
 
@@ -84,10 +82,9 @@ const PdfChat = () => {
 
           const chunk = decoder.decode(value);
 
-          // Update only the assistant's message content
           setMessages((prev) => {
             const newMessages = [...prev];
-            //@ts-ignore
+            //@ts-expect-error
             newMessages[newMessages.length - 1].content += chunk;
             return newMessages;
           });
@@ -95,7 +92,6 @@ const PdfChat = () => {
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      // Optionally show error message to user
       setMessages((prev) => [
         ...prev.slice(0, -1),
         {
@@ -110,7 +106,7 @@ const PdfChat = () => {
 
   return (
     <div className="bg-background flex h-screen w-full items-center justify-center">
-      <div className="">
+      <div>
         <ScrollArea className="h-[500px] w-full max-w-full p-4">
           {messages.length > 0 ? (
             messages.map((message, index) => (
@@ -130,12 +126,12 @@ const PdfChat = () => {
                   <Markdown
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      //@ts-ignore
+                      // @ts-expect-error
                       code({ node, inline, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className ?? "");
                         return !inline && match ? (
                           <SyntaxHighlighter
-                            //@ts-ignore
+                            // @ts-expect-error
                             style={vscDarkPlus}
                             language={match[1]}
                             PreTag="div"
@@ -148,48 +144,10 @@ const PdfChat = () => {
                             className="rounded-md bg-gray-100 px-2 py-1 text-sm text-gray-800"
                             {...props}
                           >
-                            {children}
+                            {String(children)}
                           </code>
                         );
                       },
-                      ul: ({ children }) => (
-                        <ul className="ml-6 list-disc space-y-1 text-gray-800">
-                          {children}
-                        </ul>
-                      ),
-                      ol: ({ children }) => (
-                        <ol className="ml-6 list-decimal space-y-1 text-gray-800">
-                          {children}
-                        </ol>
-                      ),
-                      li: ({ children }) => (
-                        <li className="ml-4 pl-2 text-gray-800">{children}</li>
-                      ),
-                      p: ({ children }) => (
-                        <p className="mb-2 leading-relaxed text-gray-800">
-                          {children}
-                        </p>
-                      ),
-                      blockquote: ({ children }) => (
-                        <blockquote className="ml-4 border-l-4 border-gray-300 pl-4 italic text-gray-600">
-                          {children}
-                        </blockquote>
-                      ),
-                      h1: ({ children }) => (
-                        <h1 className="mb-2 text-2xl font-bold text-gray-800">
-                          {children}
-                        </h1>
-                      ),
-                      h2: ({ children }) => (
-                        <h2 className="mb-2 text-xl font-semibold text-gray-700">
-                          {children}
-                        </h2>
-                      ),
-                      h3: ({ children }) => (
-                        <h3 className="mb-2 text-lg font-medium text-gray-600">
-                          {children}
-                        </h3>
-                      ),
                     }}
                   >
                     {message.content}
@@ -199,7 +157,7 @@ const PdfChat = () => {
             ))
           ) : (
             <div className="flex h-full w-full items-center justify-center p-10">
-              <p>Hi, I'm a bot. How can I assist you today?</p>
+              <p>Hi, I&#39;m a bot. How can I assist you today?</p>
             </div>
           )}
           <div ref={scrollRef} />
