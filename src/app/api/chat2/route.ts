@@ -9,6 +9,7 @@ interface Message {
   role: "user" | "model";
   content: string;
 }
+
 interface RequestBody {
   messages: Message[];
   userId: string;
@@ -24,13 +25,23 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!messages?.length) {
+    if (messages.length === 0) {
       return new Response(JSON.stringify({ error: "Messages are required" }), {
         status: 400,
       });
     }
 
+    // Ensure lastMessage is defined by checking if messages array is not empty
     const lastMessage = messages[messages.length - 1];
+
+    if (!lastMessage) {
+      return new Response(
+        JSON.stringify({ error: "Last message is required" }),
+        {
+          status: 400,
+        },
+      );
+    }
 
     let chatSession = await db.chatSession.findFirst({
       where: { userId },
@@ -59,8 +70,6 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // No need for @ts-expect-error, if sendMessageStream expects a string
-          //@ts-ignore
           const result = await chat.sendMessageStream(lastMessage.content);
           let fullResponse = "";
 
@@ -75,7 +84,6 @@ export async function POST(request: NextRequest) {
               {
                 chatSessionId: chatSession.id,
                 sender: "user",
-                // @ts-ignore
                 content: lastMessage.content,
               },
               {
