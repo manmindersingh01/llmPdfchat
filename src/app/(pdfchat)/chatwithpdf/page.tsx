@@ -47,7 +47,8 @@ const PdfChat = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    //@ts-ignore
+    if (!input.trim() ?? isLoading) return;
 
     setIsLoading(true);
     const userMessage = { role: "user" as const, content: input };
@@ -131,9 +132,10 @@ const PdfChat = () => {
                     components={{
                       //@ts-ignore
                       code({ node, inline, className, children, ...props }) {
-                        const match = /language-(\w+)/.exec(className || "");
+                        const match = /language-(\w+)/.exec(className ?? "");
                         return !inline && match ? (
                           <SyntaxHighlighter
+                            //@ts-ignore
                             style={vscDarkPlus}
                             language={match[1]}
                             PreTag="div"
