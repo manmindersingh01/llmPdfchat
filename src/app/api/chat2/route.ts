@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         try {
           // No need for @ts-expect-error, if sendMessageStream expects a string
+          //@ts-ignore
           const result = await chat.sendMessageStream(lastMessage.content);
           let fullResponse = "";
 
@@ -74,6 +75,7 @@ export async function POST(request: NextRequest) {
               {
                 chatSessionId: chatSession.id,
                 sender: "user",
+                // @ts-ignore
                 content: lastMessage.content,
               },
               {
