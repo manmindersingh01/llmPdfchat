@@ -1,7 +1,7 @@
 import React from "react";
 import SignIn from "~/components/discordLogin";
 import DotPattern from "~/components/ui/dot-pattern";
-import ShimmerButton from "~/components/ui/shimmer-button";
+
 import SparklesText from "~/components/ui/sparkles-text";
 import { cn } from "~/lib/utils";
 
