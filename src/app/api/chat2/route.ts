@@ -17,13 +17,19 @@ interface RequestBody {
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, userId }: RequestBody = await request.json();
+    const requestBody: RequestBody = await request.json();
 
-    if (!Array.isArray(messages) || typeof userId !== "string") {
+    if (
+      !requestBody ||
+      !Array.isArray(requestBody.messages) ||
+      typeof requestBody.userId !== "string"
+    ) {
       return new Response(JSON.stringify({ error: "Invalid request body" }), {
         status: 400,
       });
     }
+
+    const { messages, userId } = requestBody;
 
     if (messages.length === 0) {
       return new Response(JSON.stringify({ error: "Messages are required" }), {
@@ -31,12 +37,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Ensure lastMessage is defined by checking if messages array is not empty
     const lastMessage = messages[messages.length - 1];
 
-    if (!lastMessage) {
+    if (!lastMessage || !lastMessage.content) {
       return new Response(
-        JSON.stringify({ error: "Last message is required" }),
+        JSON.stringify({ error: "Last message content is required" }),
         {
           status: 400,
         },
@@ -97,7 +102,7 @@ export async function POST(request: NextRequest) {
           controller.close();
         } catch (error) {
           console.error("Streaming error:", error);
-          controller.error(error);
+          controller.error(error); // Important: Propagate the error to the stream
         }
       },
     });
