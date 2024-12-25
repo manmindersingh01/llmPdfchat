@@ -16,7 +16,6 @@ interface RequestBody {
 
 export async function POST(request: NextRequest) {
   try {
-    // Safely process incoming request data
     const { messages, userId }: RequestBody = await request.json();
 
     if (!Array.isArray(messages) || typeof userId !== "string") {
@@ -31,10 +30,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Get the last message which is the latest user input
     const lastMessage = messages[messages.length - 1];
 
-    // Create or get chat session
     let chatSession = await db.chatSession.findFirst({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -49,43 +46,34 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Format history for Gemini
     const formattedHistory = messages.slice(0, -1).map((msg: Message) => ({
       role: msg.role === "user" ? "user" : "model",
       parts: [{ text: msg.content }],
     }));
 
-    // Initialize chat with history
     const chat = model.startChat({
       history: formattedHistory,
     });
 
-    // Set up streaming
     const encoder = new TextEncoder();
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Send message and get stream
-          // @ts-expect-error: 'sendMessageStream' expects a string, and we're confirming it with 'lastMessage.content as string'
-          const result = await chat.sendMessageStream(
-            lastMessage.content as string,
-          );
+          // No need for @ts-expect-error, if sendMessageStream expects a string
+          const result = await chat.sendMessageStream(lastMessage.content);
           let fullResponse = "";
 
-          // Process stream chunks
           for await (const chunk of result.stream) {
             const chunkText = chunk.text();
             fullResponse += chunkText;
             controller.enqueue(encoder.encode(chunkText));
           }
 
-          // Save to database after streaming completes
           await db.message.createMany({
             data: [
               {
                 chatSessionId: chatSession.id,
                 sender: "user",
-                //@ts-expect-error: 'lastMessage.content' is a string and works fine in this case
                 content: lastMessage.content,
               },
               {
