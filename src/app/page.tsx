@@ -5,9 +5,7 @@ import DotPattern from "~/components/ui/dot-pattern";
 import SparklesText from "~/components/ui/sparkles-text";
 import { cn } from "~/lib/utils";
 
-type Props = {};
-
-function page({}: Props) {
+function page() {
   return (
     <div className="h-screen w-full bg-yellow-50">
       <div className="relative flex h-[500px] w-full flex-col items-center justify-center overflow-hidden rounded-lg">
