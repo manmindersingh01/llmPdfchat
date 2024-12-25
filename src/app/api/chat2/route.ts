@@ -4,10 +4,17 @@ import { db } from "~/server/db";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
+interface Message {
+  role: "user" | "model";
+  content: string;
+}
+interface RequestBody {
+  messages: Message[];
+  userId: string;
+}
 export async function POST(request: NextRequest) {
   try {
-    const { messages, userId } = await request.json();
+    const { messages, userId }: RequestBody = await request.json();
 
     if (!messages?.length) {
       return new Response(JSON.stringify({ error: "Messages are required" }), {
@@ -35,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     // Format history for Gemini
     //@ts-ignore
-    const formattedHistory = messages.slice(0, -1).map((msg) => ({
+    const formattedHistory = messages.slice(0, -1).map((msg: Message) => ({
       role: msg.role === "user" ? "user" : "model",
       parts: [{ text: msg.content }],
     }));
@@ -51,6 +58,7 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         try {
           // Send message and get stream
+          //@ts-ignore
           const result = await chat.sendMessageStream(lastMessage.content);
           let fullResponse = "";
 
@@ -67,6 +75,7 @@ export async function POST(request: NextRequest) {
               {
                 chatSessionId: chatSession.id,
                 sender: "user",
+                //@ts-ignore
                 content: lastMessage.content,
               },
               {

@@ -2,7 +2,15 @@ import { type NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
-
+interface Message {
+  role: "user" | "model";
+  content: string;
+}
+interface RequestBody {
+  prompt: string;
+  userId: string;
+  chatSessionId?: string;
+}
 import { db } from "~/server/db";
 import { useAuthStore } from "~/lib/store";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -21,7 +29,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // });
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, userId, chatSessionId } = await request.json(); // Parse the request body
+    const { prompt, userId, chatSessionId }: RequestBody = await request.json(); // Parse the request body
 
     if (!prompt) {
       return new Response(JSON.stringify({ error: "Prompt is required" }), {
