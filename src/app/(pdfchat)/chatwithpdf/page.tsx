@@ -126,25 +126,29 @@ const PdfChat = () => {
                   <Markdown
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      // @ts-expect-error
+                      // @ts-expect-error This directive is necessary because 'code' does not align perfectly with the expected component types in React Markdown.
                       code({ node, inline, className, children, ...props }) {
                         const match = /language-(\w+)/.exec(className ?? "");
                         return !inline && match ? (
                           <SyntaxHighlighter
-                            // @ts-expect-error
+                            // @ts-expect-error The imported style is compatible but not inferred correctly by TypeScript.
                             style={vscDarkPlus}
                             language={match[1]}
                             PreTag="div"
                             {...props}
                           >
-                            {String(children).replace(/\n$/, "")}
+                            {typeof children === "string"
+                              ? children.replace(/\n$/, "")
+                              : String(children)}
                           </SyntaxHighlighter>
                         ) : (
                           <code
                             className="rounded-md bg-gray-100 px-2 py-1 text-sm text-gray-800"
                             {...props}
                           >
-                            {String(children)}
+                            {typeof children === "string"
+                              ? children
+                              : String(children)}
                           </code>
                         );
                       },

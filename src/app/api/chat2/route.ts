@@ -16,8 +16,14 @@ interface RequestBody {
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, userId }: RequestBody =
-      (await request.json()) as RequestBody;
+    // Safely process incoming request data
+    const { messages, userId }: RequestBody = await request.json();
+
+    if (!Array.isArray(messages) || typeof userId !== "string") {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+      });
+    }
 
     if (!messages?.length) {
       return new Response(JSON.stringify({ error: "Messages are required" }), {
@@ -60,8 +66,8 @@ export async function POST(request: NextRequest) {
       async start(controller) {
         try {
           // Send message and get stream
+          // @ts-expect-error: 'sendMessageStream' expects a string, and we're confirming it with 'lastMessage.content as string'
           const result = await chat.sendMessageStream(
-            //@ts-ignore
             lastMessage.content as string,
           );
           let fullResponse = "";
@@ -79,7 +85,7 @@ export async function POST(request: NextRequest) {
               {
                 chatSessionId: chatSession.id,
                 sender: "user",
-                //@ts-ignore
+                //@ts-expect-error: 'lastMessage.content' is a string and works fine in this case
                 content: lastMessage.content,
               },
               {
