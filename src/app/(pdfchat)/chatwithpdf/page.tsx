@@ -18,6 +18,10 @@ type Message = {
   content: string;
 };
 
+interface UserSession {
+  userId?: string;
+}
+
 const PdfChat = () => {
   const { userId, setUserId } = useAuthStore();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -26,10 +30,10 @@ const PdfChat = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const fetchUserSession = async () => {
+    const fetchUserSession = async (): Promise<void> => {
       try {
         const response = await fetch("/api/auth/session");
-        const data = await response.json();
+        const data: UserSession = await response.json();
         if (data?.userId) {
           setUserId(data.userId);
         }
@@ -51,11 +55,13 @@ const PdfChat = () => {
     if (!input.trim() || isLoading) return;
 
     setIsLoading(true);
-    const userMessage = { role: "user" as const, content: input };
+    const userMessage = { role: "user", content: input };
 
+    //@ts-ignore
     setMessages((prev) => [...prev, userMessage]);
 
-    const assistantMessage = { role: "assistant" as const, content: "" };
+    const assistantMessage = { role: "assistant", content: "" };
+    //@ts-ignore
     setMessages((prev) => [...prev, assistantMessage]);
 
     setInput("");
@@ -84,7 +90,6 @@ const PdfChat = () => {
 
           setMessages((prev) => {
             const newMessages = [...prev];
-
             newMessages[newMessages.length - 1].content += chunk;
             return newMessages;
           });
@@ -127,29 +132,32 @@ const PdfChat = () => {
                     <Markdown
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        // @ts-expect-error This directive is necessary because 'code' does not align perfectly with the expected component types in React Markdown.
-                        code({ node, inline, className, children, ...props }) {
+                        code({
+                          inline,
+                          className,
+                          children,
+                          ...props
+                        }: {
+                          inline?: boolean;
+                          className?: string;
+                          children: React.ReactNode;
+                        }) {
                           const match = /language-(\w+)/.exec(className ?? "");
                           return !inline && match ? (
                             <SyntaxHighlighter
-                              // @ts-expect-error The imported style is compatible but not inferred correctly by TypeScript.
                               style={vscDarkPlus}
                               language={match[1]}
                               PreTag="div"
                               {...props}
                             >
-                              {typeof children === "string"
-                                ? children.replace(/\n$/, "")
-                                : String(children)}
+                              {String(children).replace(/\n$/, "")}
                             </SyntaxHighlighter>
                           ) : (
                             <code
                               className="overflow-scroll text-wrap rounded-md bg-gray-100 px-2 py-1 text-sm text-gray-800"
                               {...props}
                             >
-                              {typeof children === "string"
-                                ? children
-                                : String(children)}
+                              {children}
                             </code>
                           );
                         },
@@ -182,7 +190,7 @@ const PdfChat = () => {
               ))
             ) : (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-10">
-                <h1 className="text-4xl">Hi, Upload your pdf to get started</h1>
+                <h1 className="text-4xl">Hi, Upload your PDF to get started</h1>
                 <form className="flex" action="">
                   <Input className="w-96" type="file" />
                   <Button type="submit" className="hover:bg-black">
