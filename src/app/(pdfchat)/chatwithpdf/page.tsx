@@ -8,9 +8,7 @@ import { Button } from "~/components/ui/button";
 import { useAuthStore } from "~/lib/store";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Message = {
@@ -41,7 +39,7 @@ const PdfChat = () => {
         console.error("Error fetching user session:", error);
       }
     };
-    fetchUserSession();
+    void fetchUserSession();
   }, [setUserId]);
 
   useEffect(() => {
@@ -55,13 +53,10 @@ const PdfChat = () => {
     if (!input.trim() || isLoading) return;
 
     setIsLoading(true);
-    const userMessage = { role: "user", content: input };
-
-    //@ts-expect-error
+    const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
 
-    const assistantMessage = { role: "assistant", content: "" };
-    //@ts-expect-error
+    const assistantMessage: Message = { role: "assistant", content: "" };
     setMessages((prev) => [...prev, assistantMessage]);
 
     setInput("");
@@ -109,6 +104,12 @@ const PdfChat = () => {
     }
   };
 
+  interface CodeProps {
+    inline?: boolean;
+    className?: string;
+    children: React.ReactNode;
+  }
+
   return (
     <div className="mx-w-screen flex h-screen items-center justify-center bg-background p-4">
       <div className="flex h-full w-full max-w-4xl flex-col text-wrap">
@@ -137,11 +138,7 @@ const PdfChat = () => {
                           className,
                           children,
                           ...props
-                        }: {
-                          inline?: boolean;
-                          className?: string;
-                          children: React.ReactNode;
-                        }) {
+                        }: CodeProps) {
                           const match = /language-(\w+)/.exec(className ?? "");
                           return !inline && match ? (
                             <SyntaxHighlighter
@@ -150,7 +147,7 @@ const PdfChat = () => {
                               PreTag="div"
                               {...props}
                             >
-                              {String(children).replace(/\n$/, "")}
+                              {String(children)}
                             </SyntaxHighlighter>
                           ) : (
                             <code
