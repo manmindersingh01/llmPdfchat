@@ -8,9 +8,9 @@ import { Button } from "~/components/ui/button";
 import { useAuthStore } from "~/lib/store";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-//@ts-ignore
+
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-// @ts-ignore
+
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Message = {
