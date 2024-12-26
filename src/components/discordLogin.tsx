@@ -11,7 +11,7 @@ export default function SignIn() {
     >
       <ShimmerButton type="submit" className="shadow-2xl">
         <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white lg:text-lg dark:from-white dark:to-slate-900/10">
-          Shimmer Button
+          GET STARTED
         </span>
       </ShimmerButton>
     </form>

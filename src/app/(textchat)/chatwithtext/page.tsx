@@ -105,10 +105,10 @@ const PdfChat = () => {
   };
 
   return (
-    <div className="mx-w-screen flex h-screen items-center justify-center bg-background p-4">
+    <div className="bg-background mx-w-screen flex h-screen items-center justify-center p-4">
       <div className="flex h-full w-full max-w-4xl flex-col text-wrap">
         <ScrollArea className="flex-1 p-4">
-          <div className="space-y-4 overflow-scroll">
+          <div className="space-y-4">
             {messages.length > 0 ? (
               messages.map((message, index) => (
                 <div
@@ -118,7 +118,7 @@ const PdfChat = () => {
                   }`}
                 >
                   <div
-                    className={`w-auto overflow-scroll rounded-lg p-3 ${
+                    className={`w-auto max-w-[85%] overflow-x-auto rounded-lg p-3 ${
                       message.role === "user"
                         ? "bg-primary text-white"
                         : "bg-secondary"
@@ -181,14 +181,8 @@ const PdfChat = () => {
                 </div>
               ))
             ) : (
-              <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-10">
-                <h1 className="text-4xl">Hi, Upload your pdf to get started</h1>
-                <form className="flex" action="">
-                  <Input className="w-96" type="file" />
-                  <Button type="submit" className="hover:bg-black">
-                    Upload
-                  </Button>
-                </form>
+              <div className="flex h-full w-full items-center justify-center p-10">
+                <p>Hi, I&#39;m a bot. How can I assist you today?</p>
               </div>
             )}
             <div ref={scrollRef} />
