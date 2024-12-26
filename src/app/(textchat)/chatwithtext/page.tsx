@@ -84,7 +84,7 @@ const PdfChat = () => {
 
           setMessages((prev) => {
             const newMessages = [...prev];
-            //@ts-expect-error
+
             newMessages[newMessages.length - 1].content += chunk;
             return newMessages;
           });
@@ -105,7 +105,7 @@ const PdfChat = () => {
   };
 
   return (
-    <div className="bg-background mx-w-screen flex h-screen items-center justify-center p-4">
+    <div className="mx-w-screen flex h-screen items-center justify-center bg-background p-4">
       <div className="flex h-full w-full max-w-4xl flex-col text-wrap">
         <ScrollArea className="flex-1 p-4">
           <div className="space-y-4">
