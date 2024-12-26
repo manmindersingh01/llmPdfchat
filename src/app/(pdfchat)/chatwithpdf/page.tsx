@@ -84,7 +84,7 @@ const PdfChat = () => {
 
           setMessages((prev) => {
             const newMessages = [...prev];
-            //@ts-expect-error
+
             newMessages[newMessages.length - 1].content += chunk;
             return newMessages;
           });
