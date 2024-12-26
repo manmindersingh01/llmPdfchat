@@ -57,11 +57,11 @@ const PdfChat = () => {
     setIsLoading(true);
     const userMessage = { role: "user", content: input };
 
-    //@ts-ignore
+    //@ts-expect-error
     setMessages((prev) => [...prev, userMessage]);
 
     const assistantMessage = { role: "assistant", content: "" };
-    //@ts-ignore
+    //@ts-expect-error
     setMessages((prev) => [...prev, assistantMessage]);
 
     setInput("");
