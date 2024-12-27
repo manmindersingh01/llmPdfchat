@@ -12,6 +12,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import FileUploadDropZone from "~/components/fileUpload";
 
 type Message = {
   role: "user" | "assistant";
@@ -191,10 +192,10 @@ const PdfChat = () => {
               <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-10">
                 <h1 className="text-4xl">Hi, Upload your PDF to get started</h1>
                 <form className="flex" action="">
-                  <Input className="w-96" type="file" />
-                  <Button type="submit" className="hover:bg-black">
+                  <FileUploadDropZone />
+                  {/* <Button type="submit" className="hover:bg-black">
                     Upload
-                  </Button>
+                  </Button> */}
                 </form>
               </div>
             )}
