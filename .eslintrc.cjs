@@ -14,6 +14,8 @@ const config = {
     /* General rules: */
     "react/no-unescaped-entities": "off",
     "@next/next/no-page-custom-font": "off",
+    "@typescript-eslint/no-base-to-string": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
 
     /* TypeScript rules: Disabled */
     "@typescript-eslint/no-unused-vars": "off",
