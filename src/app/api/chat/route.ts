@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     return new Response(
       JSON.stringify({
         response: result.response.text(),
-        //@ts-ignore
+
         sender: result.response.candidates[0]?.content.role,
         chatSessionId: sessionId,
       }),
