@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "~/server/db";
 import { loadFileIntoPinecone } from "~/server/pineconeDb";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   const body = await req.json();
   const { url, name, userId } = body;
   const pages = await loadFileIntoPinecone(url);
