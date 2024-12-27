@@ -193,9 +193,6 @@ const PdfChat = () => {
                 <h1 className="text-4xl">Hi, Upload your PDF to get started</h1>
                 <form className="flex" action="">
                   <FileUploadDropZone />
-                  {/* <Button type="submit" className="hover:bg-black">
-                    Upload
-                  </Button> */}
                 </form>
               </div>
             )}

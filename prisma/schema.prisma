@@ -79,12 +79,12 @@ model ChatSession {
   User      User?     @relation(fields: [userId], references: [id])
 }
 model PDFChatSession {
-  id          String    @id @default(cuid()) // Unique identifier for the chat session
+  id          String    @id @default(cuid()) // Unique identifier for the chat session ooh
   title       String?
   userId      String? // Optionally associate a user
   createdAt   DateTime @default(now()) // Timestamp when the session was created
   updatedAt   DateTime @updatedAt // Automatically updates when the session changes
-  pdfs        PDF[]     // Many-to-many relationship to multiple PDFs
+  pdfs        PDF[]    // Many-to-many relationship to multiple PDFs
   messages    Message[] // Relation to messages exchanged in the chat
   User        User?     @relation(fields: [userId], references: [id])
 }

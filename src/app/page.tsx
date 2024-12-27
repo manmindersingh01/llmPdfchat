@@ -1,5 +1,7 @@
 import React from "react";
 import SignIn from "~/components/discordLogin";
+import SignInWithGoogle from "~/components/googleLogin";
+
 import DotPattern from "~/components/ui/dot-pattern";
 
 import SparklesText from "~/components/ui/sparkles-text";
@@ -12,7 +14,11 @@ function page() {
         <p className="z-10 mb-40 whitespace-pre-wrap text-center text-5xl font-medium tracking-tighter text-black dark:text-white">
           <SparklesText text="Never let anyone spoil your cheating" />
         </p>
-        <SignIn />
+        <div className="flex gap-4">
+          <SignIn />
+          <SignInWithGoogle />
+        </div>
+
         <DotPattern
           className={cn(
             "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
