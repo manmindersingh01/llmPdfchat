@@ -5,7 +5,13 @@ import { loadFileIntoPinecone } from "~/server/pineconeDb";
 export async function POST(req: Request) {
   const body = await req.json();
   const { url, name, userId } = body;
+
   const pages = await loadFileIntoPinecone(url);
+  console.log(
+    "-----LIST-----",
+    pages,
+    "loadFileIntoPinecone--------------------------------",
+  );
 
   console.log("_______------------", url, name, userId);
 

@@ -65,7 +65,7 @@ const PdfChat = () => {
     setInput("");
 
     try {
-      const response = await fetch("/api/chat2", {
+      const response = fetch("/api/chat2", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
