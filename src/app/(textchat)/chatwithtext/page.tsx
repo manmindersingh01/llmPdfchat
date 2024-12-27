@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Input } from "~/components/ui/input";
@@ -9,11 +7,15 @@ import { Button } from "~/components/ui/button";
 import { useAuthStore } from "~/lib/store";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-//@ts-ignore
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-// @ts-ignore
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+interface CodeProps {
+  inline?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}
 type Message = {
   role: "user" | "assistant";
   content: string;
@@ -128,12 +130,15 @@ const PdfChat = () => {
                     <Markdown
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        // @ts-expect-error This directive is necessary because 'code' does not align perfectly with the expected component types in React Markdown.
-                        code({ node, inline, className, children, ...props }) {
+                        code({
+                          inline,
+                          className,
+                          children,
+                          ...props
+                        }: CodeProps) {
                           const match = /language-(\w+)/.exec(className ?? "");
                           return !inline && match ? (
                             <SyntaxHighlighter
-                              // @ts-expect-error The imported style is compatible but not inferred correctly by TypeScript.
                               style={vscDarkPlus}
                               language={match[1]}
                               PreTag="div"
