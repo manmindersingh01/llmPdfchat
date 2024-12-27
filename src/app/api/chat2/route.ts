@@ -2,7 +2,7 @@ import { type NextRequest } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { db } from "~/server/db";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 interface Message {
@@ -17,11 +17,10 @@ interface RequestBody {
 
 export async function POST(request: NextRequest) {
   try {
-    const requestBody: RequestBody = await request.json();
+    const requestBody = (await request.json()) as RequestBody;
 
     if (
-      !requestBody ||
-      !Array.isArray(requestBody.messages) ||
+      !requestBody?.messages?.length ||
       typeof requestBody.userId !== "string"
     ) {
       return new Response(JSON.stringify({ error: "Invalid request body" }), {
@@ -30,39 +29,28 @@ export async function POST(request: NextRequest) {
     }
 
     const { messages, userId } = requestBody;
+    const lastMessage = messages.at(-1);
 
-    if (messages.length === 0) {
-      return new Response(JSON.stringify({ error: "Messages are required" }), {
-        status: 400,
-      });
-    }
-
-    const lastMessage = messages[messages.length - 1];
-
-    if (!lastMessage || !lastMessage.content) {
+    if (!lastMessage?.content) {
       return new Response(
         JSON.stringify({ error: "Last message content is required" }),
-        {
-          status: 400,
-        },
+        { status: 400 },
       );
     }
 
-    let chatSession = await db.chatSession.findFirst({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (!chatSession) {
-      chatSession = await db.chatSession.create({
+    const chatSession =
+      (await db.chatSession.findFirst({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+      })) ??
+      (await db.chatSession.create({
         data: {
           userId,
           title: "new chat session",
         },
-      });
-    }
+      }));
 
-    const formattedHistory = messages.slice(0, -1).map((msg: Message) => ({
+    const formattedHistory = messages.slice(0, -1).map((msg) => ({
       role: msg.role === "user" ? "user" : "model",
       parts: [{ text: msg.content }],
     }));
@@ -102,7 +90,7 @@ export async function POST(request: NextRequest) {
           controller.close();
         } catch (error) {
           console.error("Streaming error:", error);
-          controller.error(error); // Important: Propagate the error to the stream
+          controller.error(error);
         }
       },
     });
