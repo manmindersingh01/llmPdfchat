@@ -40,7 +40,7 @@ const PdfChat = () => {
         console.error("Error fetching user session:", error);
       }
     };
-    fetchUserSession();
+    void fetchUserSession();
   }, [setUserId]);
 
   useEffect(() => {
