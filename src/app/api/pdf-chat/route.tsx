@@ -43,7 +43,7 @@ export async function POST(req: Request, res: Response) {
         },
       },
     });
-    return NextResponse.json("done");
+    return new Response("ok", { status: 200 });
   }
   try {
   } catch (error) {
