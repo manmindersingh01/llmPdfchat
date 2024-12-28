@@ -16,8 +16,8 @@ type PDFPage = {
   pageContent: string;
   metadata: {
     source: string;
-    pdf: {};
-    loc: {};
+    pdf: object;
+    loc: object;
   };
   id: undefined;
 };
