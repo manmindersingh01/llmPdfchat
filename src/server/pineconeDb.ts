@@ -7,8 +7,6 @@ import {
   Document,
   RecursiveCharacterTextSplitter,
 } from "@pinecone-database/doc-splitter";
-import exp from "constants";
-import { promise } from "zod";
 
 let pinecone: Pinecone | null = null;
 //const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
@@ -56,7 +54,8 @@ export function turncateStringByBytes(str: string, bytes: number) {
   return new TextDecoder("utf8").decode(enc.encode(str).slice(0, bytes));
 }
 async function prepareDocs(pages: PDFPage) {
-  let { pageContent, metadata } = pages;
+  let { pageContent } = pages;
+  const { metadata } = pages;
   pageContent = pageContent.replace(/\n/g, "");
   const textSplitter = new RecursiveCharacterTextSplitter();
   const docs = await textSplitter.splitDocuments([
